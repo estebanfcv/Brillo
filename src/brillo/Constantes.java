@@ -1,11 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package brillo;
 
 import java.net.URL;
+import static brillo.Util.ObtenerBrilloMaximo;
 
 /**
  *
@@ -14,6 +10,9 @@ import java.net.URL;
 public class Constantes {
 
     public final URL icono = getClass().getResource("icono.png");
-    public static final int brilloMaximo = 7812;
+    public static final int brilloMaximo = inicializarBrilloMaximo();
 
+    public static int inicializarBrilloMaximo() {
+        return ObtenerBrilloMaximo();
+    }
 }

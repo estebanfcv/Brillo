@@ -1,18 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package brillo;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import static brillo.Util.cerrarProcesos;
+import static brillo.Constantes.inicializarBrilloMaximo;
 
 /**
  *
@@ -29,6 +23,12 @@ public class Brillo {
         String[] opciones = {"Subir", "Bajar"};
         int opcion;
         do {
+            inicializarBrilloMaximo();
+            System.out.println("el brillo Maximo es::::: " + Constantes.brilloMaximo);
+            if (Constantes.brilloMaximo == 0) {
+                JOptionPane.showMessageDialog(null, "No se pudo accesar a la propiedad brillo de la maquina");
+                return;
+            }
             opcion = JOptionPane.showOptionDialog(null, valorBrillo(), "Brillo", JOptionPane.DEFAULT_OPTION,
                     JOptionPane.INFORMATION_MESSAGE, new ImageIcon(new Constantes().icono), opciones, opciones[0]);
             if (opcion == 0) {
@@ -49,54 +49,43 @@ public class Brillo {
             is = process.getInputStream();
             bf = new BufferedInputStream(is);
             byte[] contents = new byte[1024];
-            int bytesRead = 0;
+            int bytesRead;
             String strFileContents;
-            while ((bytesRead = bf.read(contents)) != -1) {
+            if ((bytesRead = bf.read(contents)) != -1) {
                 strFileContents = new String(contents, 0, bytesRead);
                 brillo = Integer.parseInt(strFileContents.trim());
             }
-            return porcentajeBrillo(brillo);
         } catch (IOException ex) {
-            ex.printStackTrace();
-            return porcentajeBrillo(brillo);
+            JOptionPane.showMessageDialog(null, ex.getMessage());
         } finally {
             cerrarProcesos(bf, is, process);
         }
-    }
-
-    private static String porcentajeBrillo(int brillo) {
-        //7812 brillo maximo
-        //312 brillo minimo
-        if (brillo == 0) {
-            return "0%";
-        }
-        float x = (brillo * 100) / Constantes.brilloMaximo;
-        return String.valueOf(Math.round(x)) + "%";
+        return String.valueOf(((brillo * 100) / Constantes.brilloMaximo)) + "%";
     }
 
     public static void subirBrillo() {
-        if (brillo == 7812) {
+        if (brillo >= Constantes.brilloMaximo) {
             JOptionPane.showMessageDialog(null, "El brillo esta al máximo");
             return;
         }
-        String[] command = {"sh", "-c", "echo " + (brillo + 500) + " > /sys/class/backlight/intel_backlight/brightness"};
+        String[] comando = {"sh", "-c", "echo " + (brillo + 500) + " > /sys/class/backlight/intel_backlight/brightness"};
         try {
-            Runtime.getRuntime().exec(command);
+            Runtime.getRuntime().exec(comando);
         } catch (IOException ex) {
-            Logger.getLogger(Brillo.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex.getMessage());
         }
     }
 
     public static void bajarBrillo() {
-        if (brillo == 312) {
+        if (brillo <= 312) {
             JOptionPane.showMessageDialog(null, "El brillo esta al mínimo");
             return;
         }
-        String[] command = {"sh", "-c", "echo " + (brillo - 500) + " > /sys/class/backlight/intel_backlight/brightness"};
+        String[] comando = {"sh", "-c", "echo " + (brillo - 500) + " > /sys/class/backlight/intel_backlight/brightness"};
         try {
-            Runtime.getRuntime().exec(command);
+            Runtime.getRuntime().exec(comando);
         } catch (IOException ex) {
-            Logger.getLogger(Brillo.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex.getMessage());;
         }
     }
 }
