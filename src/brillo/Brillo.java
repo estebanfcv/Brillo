@@ -20,13 +20,12 @@ public class Brillo {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        String[] opciones = {"Subir", "Bajar"};
+        String[] opciones = {"+", "-"};
         int opcion;
         do {
             inicializarBrilloMaximo();
-            System.out.println("el brillo Maximo es::::: " + Constantes.brilloMaximo);
             if (Constantes.brilloMaximo == 0) {
-                JOptionPane.showMessageDialog(null, "No se pudo accesar a la propiedad brillo de la maquina");
+                JOptionPane.showMessageDialog(null, "No se pudo accesar a la propiedad brillo del equipo");
                 return;
             }
             opcion = JOptionPane.showOptionDialog(null, valorBrillo(), "Brillo", JOptionPane.DEFAULT_OPTION,
@@ -50,10 +49,8 @@ public class Brillo {
             bf = new BufferedInputStream(is);
             byte[] contents = new byte[1024];
             int bytesRead;
-            String strFileContents;
             if ((bytesRead = bf.read(contents)) != -1) {
-                strFileContents = new String(contents, 0, bytesRead);
-                brillo = Integer.parseInt(strFileContents.trim());
+                brillo = Integer.parseInt(new String(contents, 0, bytesRead).trim());
             }
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage());
@@ -85,7 +82,7 @@ public class Brillo {
         try {
             Runtime.getRuntime().exec(comando);
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage());;
+            JOptionPane.showMessageDialog(null, ex.getMessage());
         }
     }
 }

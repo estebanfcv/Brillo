@@ -22,7 +22,7 @@ public class Util {
             if (process != null) {
                 process.destroy();
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
     }
@@ -39,10 +39,8 @@ public class Util {
             bf = new BufferedInputStream(is);
             byte[] contents = new byte[1024];
             int bytesRead;
-            String strFileContents;
             if ((bytesRead = bf.read(contents)) != -1) {
-                strFileContents = new String(contents, 0, bytesRead);
-                brillo = Integer.parseInt(strFileContents.trim());
+                brillo = Integer.parseInt(new String(contents, 0, bytesRead).trim());
             }
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage());
