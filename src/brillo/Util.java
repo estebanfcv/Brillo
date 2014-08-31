@@ -23,7 +23,7 @@ public class Util {
                 process.destroy();
             }
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -43,7 +43,7 @@ public class Util {
                 brillo = Integer.parseInt(new String(contents, 0, bytesRead).trim());
             }
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage());
+            JOptionPane.showMessageDialog(null, ex.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
         } finally {
             cerrarProcesos(bf, is, process);
         }

@@ -6,7 +6,7 @@ import java.io.InputStream;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import static brillo.Util.cerrarProcesos;
-import static brillo.Constantes.inicializarBrilloMaximo;
+import static brillo.Constantes.inicializarBrilloAlMaximo;
 
 /**
  *
@@ -22,10 +22,11 @@ public class Brillo {
     public static void main(String[] args) {
         String[] opciones = {"+", "-"};
         int opcion;
+        inicializarBrilloAlMaximo();
         do {
-            inicializarBrilloMaximo();
             if (Constantes.brilloMaximo == 0) {
-                JOptionPane.showMessageDialog(null, "No se pudo accesar a la propiedad brillo del equipo");
+                JOptionPane.showMessageDialog(null, "No se pudo accesar a la propiedad brillo del equipo", "Error",
+                        JOptionPane.ERROR_MESSAGE);
                 return;
             }
             opcion = JOptionPane.showOptionDialog(null, valorBrillo(), "Brillo", JOptionPane.DEFAULT_OPTION,
@@ -53,7 +54,7 @@ public class Brillo {
                 brillo = Integer.parseInt(new String(contents, 0, bytesRead).trim());
             }
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage());
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         } finally {
             cerrarProcesos(bf, is, process);
         }
@@ -69,7 +70,7 @@ public class Brillo {
         try {
             Runtime.getRuntime().exec(comando);
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage());
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -82,7 +83,7 @@ public class Brillo {
         try {
             Runtime.getRuntime().exec(comando);
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage());
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }
