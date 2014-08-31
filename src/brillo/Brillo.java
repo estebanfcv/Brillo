@@ -62,7 +62,7 @@ public class Brillo {
 
     public static void subirBrillo() {
         if (brillo >= Constantes.brilloMaximo) {
-            JOptionPane.showMessageDialog(null, "El brillo esta al máximo");
+            JOptionPane.showMessageDialog(null, "El brillo está al máximo");
             return;
         }
         String[] comando = {"sh", "-c", "echo " + (brillo + 500) + " > /sys/class/backlight/intel_backlight/brightness"};
@@ -75,7 +75,7 @@ public class Brillo {
 
     public static void bajarBrillo() {
         if (brillo <= 312) {
-            JOptionPane.showMessageDialog(null, "El brillo esta al mínimo");
+            JOptionPane.showMessageDialog(null, "El brillo está al mínimo");
             return;
         }
         String[] comando = {"sh", "-c", "echo " + (brillo - 500) + " > /sys/class/backlight/intel_backlight/brightness"};
