@@ -51,7 +51,7 @@ public class Brillo {
             byte[] contents = new byte[1024];
             int bytesRead;
             if ((bytesRead = bf.read(contents)) != -1) {
-                brillo = Integer.parseInt(new String(contents, 0, bytesRead).trim());
+                brillo = new Integer(new String(contents, 0, bytesRead).trim());
             }
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
