@@ -20,7 +20,7 @@ public class Brillo {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        String[] opciones = {"+", "-"};
+        String[] opciones = {"-", "+"};
         int opcion;
         inicializarBrilloAlMaximo();
         do {
@@ -32,9 +32,9 @@ public class Brillo {
             opcion = JOptionPane.showOptionDialog(null, valorBrillo(), "Brillo", JOptionPane.DEFAULT_OPTION,
                     JOptionPane.INFORMATION_MESSAGE, new ImageIcon(new Constantes().icono), opciones, opciones[0]);
             if (opcion == 0) {
-                subirBrillo();
-            } else if (opcion == 1) {
                 bajarBrillo();
+            } else if (opcion == 1) {
+                subirBrillo();
             }
         } while (opcion != -1);
     }
