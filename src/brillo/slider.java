@@ -4,8 +4,6 @@ import static brillo.Util.cerrarProcesos;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Dictionary;
-import java.util.Hashtable;
 
 /**
  *
