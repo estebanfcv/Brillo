@@ -1,15 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package brillo;
 
 import static brillo.Util.cerrarProcesos;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.swing.JSlider;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 /**
  *
@@ -25,28 +21,28 @@ public class slider extends javax.swing.JFrame {
     public slider() {
         BRILLO = obtenerBrilloMaximo();
         initComponents();
-        JSBrillo.setValue(getPorcentaje(obtenerBrilloActual()));
+        JSBrillo.setValue(obtenerBrilloActual());
     }
 
     private int obtenerBrilloMaximo() {
         int maximo = 0;
-        String[] brilloActual = {"sh", "-c", "cat /sys/class/backlight/intel_backlight/max_brightness"};
+        String[] brilloMaximo = {"sh", "-c", "cat /sys/class/backlight/intel_backlight/max_brightness"};
         Process process = null;
         InputStream is = null;
-        BufferedInputStream bf = null;
+        BufferedInputStream bis = null;
         try {
-            process = Runtime.getRuntime().exec(brilloActual);
+            process = Runtime.getRuntime().exec(brilloMaximo);
             is = process.getInputStream();
-            bf = new BufferedInputStream(is);
+            bis = new BufferedInputStream(is);
             byte[] contents = new byte[1024];
             int bytesRead;
-            if ((bytesRead = bf.read(contents)) != -1) {
+            if ((bytesRead = bis.read(contents)) != -1) {
                 maximo = new Integer(new String(contents, 0, bytesRead).trim());
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            cerrarProcesos(bf, is, process);
+            cerrarProcesos(bis, is, process);
         }
         return maximo;
     }
@@ -71,7 +67,7 @@ public class slider extends javax.swing.JFrame {
         } finally {
             cerrarProcesos(bf, is, process);
         }
-        return actual;
+        return actual * 100 / BRILLO;
     }
 
     /**
@@ -84,6 +80,7 @@ public class slider extends javax.swing.JFrame {
     private void initComponents() {
 
         JSBrillo = new javax.swing.JSlider();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -103,31 +100,35 @@ public class slider extends javax.swing.JFrame {
             }
         });
 
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/brillo/icono.png"))); // NOI18N
+        jLabel1.setToolTipText("Brillo");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(42, 42, 42)
-                .addComponent(JSBrillo, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(40, Short.MAX_VALUE))
+            .addComponent(JSBrillo, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addGap(126, 126, 126))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(132, 132, 132)
+                .addGap(24, 24, 24)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(JSBrillo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(152, Short.MAX_VALUE))
+                .addContainerGap(54, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void JSBrilloStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_JSBrilloStateChanged
-        // TODO add your handling code here:
-        JSlider source = (JSlider) evt.getSource();
-        if (source.getValue() > 0) {
-            String[] comando = {"sh", "-c", "echo " + ((BRILLO * source.getValue()) / 100) + " > /sys/class/backlight/intel_backlight/brightness"};
+        if (JSBrillo.getValue() > 0) {
+            String[] comando = {"sh", "-c", "echo " + ((BRILLO * JSBrillo.getValue()) / 100) + " > /sys/class/backlight/intel_backlight/brightness"};
             try {
                 Runtime.getRuntime().exec(comando);
             } catch (IOException ex) {
@@ -146,20 +147,9 @@ public class slider extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowOpened
 
     private void JSBrilloMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_JSBrilloMouseWheelMoved
-        // TODO add your handling code here:
-        int notches = evt.getWheelRotation();
-        if (notches < 0) {
-            System.out.println("Mouse wheel moved UP " + -notches + " notch(es)");
-            JSBrillo.setValue(JSBrillo.getValue() + 1);
-        } else if (notches > 0) {
-            System.out.println("Mouse wheel moved DOWN " + notches + " notch(es)");
-            JSBrillo.setValue(JSBrillo.getValue() - 1);
-        }
+        int giro = evt.getWheelRotation();
+        JSBrillo.setValue(giro < 0 ? JSBrillo.getValue() + 1 : JSBrillo.getValue() - 1);
     }//GEN-LAST:event_JSBrilloMouseWheelMoved
-
-    private int getPorcentaje(int actual) {
-        return actual * 100 / BRILLO;
-    }
 
     /**
      * @param args the command line arguments
@@ -198,5 +188,6 @@ public class slider extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider JSBrillo;
+    private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 }
