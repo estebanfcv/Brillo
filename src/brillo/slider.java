@@ -65,7 +65,7 @@ public class slider extends javax.swing.JFrame {
         } finally {
             cerrarProcesos(bf, is, process);
         }
-        return actual * 100 / BRILLO;
+        return Math.round((float) actual * 100 / (float) BRILLO);
     }
 
     /**
@@ -79,9 +79,18 @@ public class slider extends javax.swing.JFrame {
 
         JSBrillo = new javax.swing.JSlider();
         jLabel1 = new javax.swing.JLabel();
+        textValorActual = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Brillo");
         addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 formWindowOpened(evt);
             }
@@ -101,6 +110,14 @@ public class slider extends javax.swing.JFrame {
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/brillo/icono.png"))); // NOI18N
         jLabel1.setToolTipText("Brillo");
 
+        textValorActual.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textValorActualActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("%");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -109,13 +126,24 @@ public class slider extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addGap(126, 126, 126))
+                .addGap(54, 54, 54)
+                .addComponent(textValorActual, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addComponent(jLabel1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addComponent(jLabel1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(textValorActual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(JSBrillo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(54, Short.MAX_VALUE))
@@ -126,6 +154,7 @@ public class slider extends javax.swing.JFrame {
 
     private void JSBrilloStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_JSBrilloStateChanged
         if (JSBrillo.getValue() > 0) {
+            textValorActual.setText(String.valueOf(JSBrillo.getValue()));
             String[] comando = {"sh", "-c", "echo " + ((BRILLO * JSBrillo.getValue()) / 100) + " > /sys/class/backlight/intel_backlight/brightness"};
             try {
                 Runtime.getRuntime().exec(comando);
@@ -142,17 +171,38 @@ public class slider extends javax.swing.JFrame {
         JSBrillo.setMajorTickSpacing(10);
         JSBrillo.setMinorTickSpacing(10);
         JSBrillo.setPaintLabels(true);
+        textValorActual.setEnabled(false);
+        textValorActual.setText(String.valueOf(JSBrillo.getValue()));
+
     }//GEN-LAST:event_formWindowOpened
 
     private void JSBrilloMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_JSBrilloMouseWheelMoved
         int giro = evt.getWheelRotation();
         JSBrillo.setValue(giro < 0 ? JSBrillo.getValue() + 1 : JSBrillo.getValue() - 1);
+        textValorActual.setText(String.valueOf(JSBrillo.getValue()));
     }//GEN-LAST:event_JSBrilloMouseWheelMoved
+
+    private void textValorActualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textValorActualActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_textValorActualActionPerformed
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_formWindowClosed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+//        Util.obtenerDatos()
+        Util.crearArchivo(((BRILLO * JSBrillo.getValue()) / 100));
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String args[]) throws IOException {
+        String[] cmd = {"/bin/bash", "-c", "echo Zelda090| sudo -S " + "mkdir /root/carpetaPrueba"};
+        Runtime.getRuntime().exec(cmd);
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -187,5 +237,7 @@ public class slider extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider JSBrillo;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JTextField textValorActual;
     // End of variables declaration//GEN-END:variables
 }
