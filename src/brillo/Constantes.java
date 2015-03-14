@@ -1,7 +1,7 @@
 package brillo;
 
 import java.net.URL;
-import static brillo.Util.ObtenerBrilloMaximo;
+import static brillo.Util.obtenerBrilloMaximo;
 
 /**
  *
@@ -13,6 +13,6 @@ public class Constantes {
     public static final int brilloMaximo = inicializarBrilloAlMaximo();
 
     public static int inicializarBrilloAlMaximo() {
-        return ObtenerBrilloMaximo();
+        return obtenerBrilloMaximo();
     }
 }

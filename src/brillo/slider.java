@@ -11,61 +11,15 @@ import java.io.InputStream;
  */
 public class slider extends javax.swing.JFrame {
 
-    public final int BRILLO;
+    public final int BRILLO_MAXIMO;
 
     /**
      * Creates new form slider
      */
     public slider() {
-        BRILLO = obtenerBrilloMaximo();
+        BRILLO_MAXIMO = Util.obtenerBrilloMaximo();
         initComponents();
-        JSBrillo.setValue(obtenerBrilloActual());
-    }
-
-    private int obtenerBrilloMaximo() {
-        int maximo = 0;
-        String[] brilloMaximo = {"sh", "-c", "cat /sys/class/backlight/intel_backlight/max_brightness"};
-        Process process = null;
-        InputStream is = null;
-        BufferedInputStream bis = null;
-        try {
-            process = Runtime.getRuntime().exec(brilloMaximo);
-            is = process.getInputStream();
-            bis = new BufferedInputStream(is);
-            byte[] contents = new byte[1024];
-            int bytesRead;
-            if ((bytesRead = bis.read(contents)) != -1) {
-                maximo = new Integer(new String(contents, 0, bytesRead).trim());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            cerrarProcesos(bis, is, process);
-        }
-        return maximo;
-    }
-
-    private int obtenerBrilloActual() {
-        int actual = 0;
-        String[] brilloActual = {"sh", "-c", "cat /sys/class/backlight/intel_backlight/brightness"};
-        Process process = null;
-        InputStream is = null;
-        BufferedInputStream bf = null;
-        try {
-            process = Runtime.getRuntime().exec(brilloActual);
-            is = process.getInputStream();
-            bf = new BufferedInputStream(is);
-            byte[] contents = new byte[1024];
-            int bytesRead;
-            if ((bytesRead = bf.read(contents)) != -1) {
-                actual = new Integer(new String(contents, 0, bytesRead).trim());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            cerrarProcesos(bf, is, process);
-        }
-        return Math.round((float) actual * 100 / (float) BRILLO);
+        JSBrillo.setValue(Util.obtenerBrilloActual(BRILLO_MAXIMO));
     }
 
     /**
@@ -155,17 +109,11 @@ public class slider extends javax.swing.JFrame {
     private void JSBrilloStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_JSBrilloStateChanged
         if (JSBrillo.getValue() > 0) {
             textValorActual.setText(String.valueOf(JSBrillo.getValue()));
-            String[] comando = {"sh", "-c", "echo " + ((BRILLO * JSBrillo.getValue()) / 100) + " > /sys/class/backlight/intel_backlight/brightness"};
-            try {
-                Runtime.getRuntime().exec(comando);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+            Util.cambiarBrillo(BRILLO_MAXIMO, JSBrillo.getValue());
         }
     }//GEN-LAST:event_JSBrilloStateChanged
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        // TODO add your handling code here:
         JSBrillo.setMinimum(0);
         JSBrillo.setMaximum(100);
         JSBrillo.setMajorTickSpacing(10);
@@ -177,8 +125,7 @@ public class slider extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowOpened
 
     private void JSBrilloMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_JSBrilloMouseWheelMoved
-        int giro = evt.getWheelRotation();
-        JSBrillo.setValue(giro < 0 ? JSBrillo.getValue() + 1 : JSBrillo.getValue() - 1);
+        JSBrillo.setValue(evt.getWheelRotation() < 0 ? JSBrillo.getValue() + 1 : JSBrillo.getValue() - 1);
         textValorActual.setText(String.valueOf(JSBrillo.getValue()));
     }//GEN-LAST:event_JSBrilloMouseWheelMoved
 
@@ -192,17 +139,14 @@ public class slider extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowClosed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        // TODO add your handling code here:
-//        Util.obtenerDatos()
-        Util.crearArchivo(((BRILLO * JSBrillo.getValue()) / 100));
+        Util.guardarBrilloActual(Math.round(((float) BRILLO_MAXIMO * JSBrillo.getValue()) / (float) 100));
     }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments
+     * @exception IOException
      */
     public static void main(String args[]) throws IOException {
-        String[] cmd = {"/bin/bash", "-c", "echo Zelda090| sudo -S " + "mkdir /root/carpetaPrueba"};
-        Runtime.getRuntime().exec(cmd);
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -228,6 +172,7 @@ public class slider extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new slider().setVisible(true);
             }

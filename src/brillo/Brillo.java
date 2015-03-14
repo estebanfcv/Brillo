@@ -56,7 +56,7 @@ public class Brillo {
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         } finally {
-            cerrarProcesos(bf, is, process);
+            cerrarProcesos(bf, is, process, null);
         }
         return String.valueOf(((brillo * 100) / Constantes.brilloMaximo)) + "%";
     }

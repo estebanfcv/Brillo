@@ -2,17 +2,9 @@ package brillo;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -20,7 +12,7 @@ import javax.swing.JOptionPane;
  */
 public class Util {
 
-    public static void cerrarProcesos(BufferedInputStream bf, InputStream is, Process process) {
+    public static void cerrarProcesos(BufferedInputStream bf, InputStream is, Process process, BufferedReader br) {
         try {
             if (bf != null) {
                 bf.close();
@@ -31,12 +23,15 @@ public class Util {
             if (process != null) {
                 process.destroy();
             }
+            if(br !=null){
+                br.close();
+            }
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
     }
 
-    public static int ObtenerBrilloMaximo() {
+    public static int obtenerBrilloMaximo() {
         String[] brilloActual = {"sh", "-c", "cat /sys/class/backlight/intel_backlight/max_brightness"};
         Process process = null;
         int brillo = 0;
@@ -52,47 +47,67 @@ public class Util {
                 brillo = Integer.parseInt(new String(contents, 0, bytesRead).trim());
             }
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
         } finally {
-            cerrarProcesos(bf, is, process);
+            cerrarProcesos(bf, is, process,null);
         }
         return brillo;
     }
-
-    public static String obtenerDatos() {
-        String[] cmd = {"/bin/bash", "-c", "echo Zelda090| sudo -S " + "cat /etc/rc.local"};
+    
+        public static int obtenerBrilloActual(int BRILLO) {
+        int actual = 0;
+        String[] brilloActual = {"sh", "-c", "cat /sys/class/backlight/intel_backlight/brightness"};
+        Process process = null;
+        InputStream is = null;
+        BufferedInputStream bf = null;
         try {
-            Process p = Runtime.getRuntime().exec(cmd);
-            String s;
-            BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            while ((s = stdInput.readLine()) != null) {
-                System.out.println(s);
+            process = Runtime.getRuntime().exec(brilloActual);
+            is = process.getInputStream();
+            bf = new BufferedInputStream(is);
+            byte[] contents = new byte[1024];
+            int bytesRead;
+            if ((bytesRead = bf.read(contents)) != -1) {
+                actual = new Integer(new String(contents, 0, bytesRead).trim());
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            cerrarProcesos(bf, is, process,null);
         }
-        return "";
+        return Math.round((float) actual * 100 / (float) BRILLO);
     }
-
-    public static void crearArchivo(int valor) {
-        try {
-            BufferedReader b = new BufferedReader(new FileReader("/etc/rc.local"));
-            File f = new File("/etc/rc.local");
-            FileOutputStream fos = new FileOutputStream(f);
-            String s;
-            String texto = "";
-            while ((s = b.readLine()) != null) {
-                if (s.contains("echo")) {
-                    s = s.replace(obtenerSoloNumero(s), String.valueOf(valor));
-                }
-                texto += s + "\n";
+        
+        public static void cambiarBrillo(int BRILLO_MAXIMO, int valor){
+            String[] comando = {"sh", "-c", "echo " + ((BRILLO_MAXIMO * valor) / 100) + " > /sys/class/backlight/intel_backlight/brightness"};
+            try {
+                Runtime.getRuntime().exec(comando);
+            } catch (IOException ex) {
+                ex.printStackTrace();
             }
-            byte[] contentInBytes = texto.getBytes();
-            fos.write(contentInBytes);
-            fos.flush();
-            fos.close();
+        }
+
+    public static void guardarBrilloActual(int valor) {
+        BufferedReader b = null;
+        try {
+            b = new BufferedReader(new FileReader("/etc/rc.local"));
+            String cadenaOriginal = "";
+            String cadenaFinal = "";
+            while ((cadenaOriginal = b.readLine()) != null) {
+                if (cadenaOriginal.contains("echo")) {
+                    cadenaFinal = cadenaOriginal.replace(obtenerSoloNumero(cadenaOriginal), String.valueOf(valor));
+                    break;
+                }
+            }
+            cadenaOriginal = cadenaOriginal.replace("/", "\\/");
+            cadenaFinal = cadenaFinal.replace("/", "\\/");
+            if (!cadenaOriginal.isEmpty() && !cadenaFinal.isEmpty()) {
+                String[] sed = {"/bin/bash", "-c", "echo Zelda090| sudo -S " + "sed  -i  's/" + cadenaOriginal + "/" + cadenaFinal + "/g' /etc/rc.local"};
+                new ProcessBuilder(sed).start();
+            }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            cerrarProcesos(null, null, null,b);
         }
     }
 
