@@ -5,6 +5,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  *
@@ -23,7 +25,7 @@ public class Util {
             if (process != null) {
                 process.destroy();
             }
-            if(br !=null){
+            if (br != null) {
                 br.close();
             }
         } catch (IOException e) {
@@ -49,12 +51,12 @@ public class Util {
         } catch (IOException ex) {
             ex.printStackTrace();
         } finally {
-            cerrarProcesos(bf, is, process,null);
+            cerrarProcesos(bf, is, process, null);
         }
         return brillo;
     }
-    
-        public static int obtenerBrilloActual(int BRILLO) {
+
+    public static int obtenerBrilloActual(int BRILLO_MAXIMO) {
         int actual = 0;
         String[] brilloActual = {"sh", "-c", "cat /sys/class/backlight/intel_backlight/brightness"};
         Process process = null;
@@ -72,19 +74,19 @@ public class Util {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            cerrarProcesos(bf, is, process,null);
+            cerrarProcesos(bf, is, process, null);
         }
-        return Math.round((float) actual * 100 / (float) BRILLO);
+        return Math.round((float) actual * 100 / (float) BRILLO_MAXIMO);
     }
-        
-        public static void cambiarBrillo(int BRILLO_MAXIMO, int valor){
-            String[] comando = {"sh", "-c", "echo " + ((BRILLO_MAXIMO * valor) / 100) + " > /sys/class/backlight/intel_backlight/brightness"};
-            try {
-                Runtime.getRuntime().exec(comando);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+
+    public static void cambiarBrillo(int BRILLO_MAXIMO, int valor) {
+        String[] comando = {"sh", "-c", "echo " + ((BRILLO_MAXIMO * valor) / 100) + " > /sys/class/backlight/intel_backlight/brightness"};
+        try {
+            Runtime.getRuntime().exec(comando);
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
+    }
 
     public static void guardarBrilloActual(int valor) {
         BufferedReader b = null;
@@ -118,7 +120,7 @@ public class Util {
             if (x >= 48 && x <= 57) {
                 numero += s.charAt(i);
             }
-        }
+                }
         return numero;
     }
 }

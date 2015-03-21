@@ -1,6 +1,11 @@
 package brillo;
 
+import java.awt.BorderLayout;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -29,12 +34,12 @@ public class slider extends javax.swing.JFrame {
     private void initComponents() {
 
         JSBrillo = new javax.swing.JSlider();
-        jLabel1 = new javax.swing.JLabel();
         textValorActual = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Brillo");
+        setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent evt) {
                 formWindowClosed(evt);
@@ -58,9 +63,6 @@ public class slider extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/brillo/icono.png"))); // NOI18N
-        jLabel1.setToolTipText("Brillo");
-
         textValorActual.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 textValorActualActionPerformed(evt);
@@ -76,8 +78,6 @@ public class slider extends javax.swing.JFrame {
             .addComponent(JSBrillo, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addGap(54, 54, 54)
                 .addComponent(textValorActual, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
@@ -86,31 +86,29 @@ public class slider extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(24, 24, 24)
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(textValorActual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(textValorActual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addGap(63, 63, 63)
                 .addComponent(JSBrillo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(54, Short.MAX_VALUE))
+                .addContainerGap(45, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void JSBrilloStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_JSBrilloStateChanged
-        if (JSBrillo.getValue() > 0) {
-            textValorActual.setText(String.valueOf(JSBrillo.getValue()));
-            Util.cambiarBrillo(BRILLO_MAXIMO, JSBrillo.getValue());
-        }
+        JSBrillo.setValue(JSBrillo.getValue() <= 0 ? 1 : JSBrillo.getValue());
+        textValorActual.setText(String.valueOf(JSBrillo.getValue()));
+        Util.cambiarBrillo(BRILLO_MAXIMO, JSBrillo.getValue());
     }//GEN-LAST:event_JSBrilloStateChanged
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        setIconImage(new ImageIcon(getClass().getResource("/imagenes/sol.png")).getImage());
+        Panel p = new Panel();
+        this.add(p, BorderLayout.CENTER);
+        p.repaint();
         JSBrillo.setMinimum(0);
         JSBrillo.setMaximum(100);
         JSBrillo.setMajorTickSpacing(10);
@@ -178,7 +176,6 @@ public class slider extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider JSBrillo;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JTextField textValorActual;
     // End of variables declaration//GEN-END:variables
