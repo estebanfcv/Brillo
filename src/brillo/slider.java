@@ -21,6 +21,7 @@ public class slider extends javax.swing.JFrame {
     public slider() {
         BRILLO_MAXIMO = Util.obtenerBrilloMaximo();
         initComponents();
+        setIconImage(new ImageIcon(getClass().getResource("/imagenes/sol.png")).getImage());
         JSBrillo.setValue(Util.obtenerBrilloActual(BRILLO_MAXIMO));
     }
 
@@ -105,7 +106,6 @@ public class slider extends javax.swing.JFrame {
     }//GEN-LAST:event_JSBrilloStateChanged
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        setIconImage(new ImageIcon(getClass().getResource("/imagenes/sol.png")).getImage());
         Panel p = new Panel();
         this.add(p, BorderLayout.CENTER);
         p.repaint();
