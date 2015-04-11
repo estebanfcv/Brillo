@@ -1,9 +1,10 @@
 package brillo;
 
+import static brillo.Util.cambiarBrillo;
+import static brillo.Util.guardarBrilloActual;
+import static brillo.Util.obtenerBrilloActual;
+import static brillo.Util.obtenerBrilloMaximo;
 import java.awt.BorderLayout;
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.swing.ImageIcon;
 
@@ -19,10 +20,10 @@ public class slider extends javax.swing.JFrame {
      * Creates new form slider
      */
     public slider() {
-        BRILLO_MAXIMO = Util.obtenerBrilloMaximo();
+        BRILLO_MAXIMO = obtenerBrilloMaximo();
         initComponents();
         setIconImage(new ImageIcon(getClass().getResource("/imagenes/sol.png")).getImage());
-        JSBrillo.setValue(Util.obtenerBrilloActual(BRILLO_MAXIMO));
+        JSBrillo.setValue(obtenerBrilloActual(BRILLO_MAXIMO));
     }
 
     /**
@@ -41,10 +42,12 @@ public class slider extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Brillo");
         setResizable(false);
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosed(java.awt.event.WindowEvent evt) {
-                formWindowClosed(evt);
+        addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
+                formMouseWheelMoved(evt);
             }
+        });
+        addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
             }
@@ -53,20 +56,9 @@ public class slider extends javax.swing.JFrame {
             }
         });
 
-        JSBrillo.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
-            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
-                JSBrilloMouseWheelMoved(evt);
-            }
-        });
         JSBrillo.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 JSBrilloStateChanged(evt);
-            }
-        });
-
-        textValorActual.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textValorActualActionPerformed(evt);
             }
         });
 
@@ -102,7 +94,7 @@ public class slider extends javax.swing.JFrame {
     private void JSBrilloStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_JSBrilloStateChanged
         JSBrillo.setValue(JSBrillo.getValue() <= 0 ? 1 : JSBrillo.getValue());
         textValorActual.setText(String.valueOf(JSBrillo.getValue()));
-        Util.cambiarBrillo(BRILLO_MAXIMO, JSBrillo.getValue());
+        cambiarBrillo(BRILLO_MAXIMO, JSBrillo.getValue());
     }//GEN-LAST:event_JSBrilloStateChanged
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
@@ -119,23 +111,14 @@ public class slider extends javax.swing.JFrame {
 
     }//GEN-LAST:event_formWindowOpened
 
-    private void JSBrilloMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_JSBrilloMouseWheelMoved
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        guardarBrilloActual(Math.round(((float) BRILLO_MAXIMO * JSBrillo.getValue()) / (float) 100));
+    }//GEN-LAST:event_formWindowClosing
+
+    private void formMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_formMouseWheelMoved
         JSBrillo.setValue(evt.getWheelRotation() < 0 ? JSBrillo.getValue() + 1 : JSBrillo.getValue() - 1);
         textValorActual.setText(String.valueOf(JSBrillo.getValue()));
-    }//GEN-LAST:event_JSBrilloMouseWheelMoved
-
-    private void textValorActualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textValorActualActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_textValorActualActionPerformed
-
-    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
-        // TODO add your handling code here:
-
-    }//GEN-LAST:event_formWindowClosed
-
-    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        Util.guardarBrilloActual(Math.round(((float) BRILLO_MAXIMO * JSBrillo.getValue()) / (float) 100));
-    }//GEN-LAST:event_formWindowClosing
+    }//GEN-LAST:event_formMouseWheelMoved
 
     /**
      * @param args the command line arguments

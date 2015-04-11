@@ -5,8 +5,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  *
@@ -46,7 +44,7 @@ public class Util {
             byte[] contents = new byte[1024];
             int bytesRead;
             if ((bytesRead = bf.read(contents)) != -1) {
-                brillo = Integer.parseInt(new String(contents, 0, bytesRead).trim());
+                brillo = new Integer(new String(contents, 0, bytesRead).trim());
             }
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -79,8 +77,8 @@ public class Util {
         return Math.round((float) actual * 100 / (float) BRILLO_MAXIMO);
     }
 
-    public static void cambiarBrillo(int BRILLO_MAXIMO, int valor) {
-        String[] comando = {"sh", "-c", "echo " + ((BRILLO_MAXIMO * valor) / 100) + " > /sys/class/backlight/intel_backlight/brightness"};
+    public static void cambiarBrillo(int BRILLO_MAXIMO, int brilloActual) {
+        String[] comando = {"sh", "-c", "echo " + ((BRILLO_MAXIMO * brilloActual) / 100) + " > /sys/class/backlight/intel_backlight/brightness"};
         try {
             Runtime.getRuntime().exec(comando);
         } catch (IOException ex) {
@@ -88,7 +86,7 @@ public class Util {
         }
     }
 
-    public static void guardarBrilloActual(int valor) {
+    public static void guardarBrilloActual(int brilloActual) {
         BufferedReader b = null;
         try {
             b = new BufferedReader(new FileReader("/etc/rc.local"));
@@ -96,7 +94,7 @@ public class Util {
             String cadenaFinal = "";
             while ((cadenaOriginal = b.readLine()) != null) {
                 if (cadenaOriginal.contains("echo")) {
-                    cadenaFinal = cadenaOriginal.replace(obtenerSoloNumero(cadenaOriginal), String.valueOf(valor));
+                    cadenaFinal = cadenaOriginal.replace(obtenerSoloNumero(cadenaOriginal), String.valueOf(brilloActual));
                     break;
                 }
             }
@@ -109,7 +107,7 @@ public class Util {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            cerrarProcesos(null, null, null,b);
+            cerrarProcesos(null, null, null, b);
         }
     }
 
@@ -120,7 +118,7 @@ public class Util {
             if (x >= 48 && x <= 57) {
                 numero += s.charAt(i);
             }
-                }
+        }
         return numero;
     }
 }
