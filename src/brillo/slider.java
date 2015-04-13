@@ -99,7 +99,7 @@ public class slider extends javax.swing.JFrame {
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         Panel p = new Panel();
-        this.add(p, BorderLayout.CENTER);
+        add(p, BorderLayout.CENTER);
         p.repaint();
         JSBrillo.setMinimum(0);
         JSBrillo.setMaximum(100);

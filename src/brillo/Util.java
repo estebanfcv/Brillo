@@ -12,10 +12,10 @@ import java.io.InputStream;
  */
 public class Util {
 
-    public static void cerrarProcesos(BufferedInputStream bf, InputStream is, Process process, BufferedReader br) {
+    public static void cerrarProcesos(BufferedInputStream bis, InputStream is, Process process, BufferedReader br) {
         try {
-            if (bf != null) {
-                bf.close();
+            if (bis != null) {
+                bis.close();
             }
             if (is != null) {
                 is.close();
@@ -36,20 +36,20 @@ public class Util {
         Process process = null;
         int brillo = 0;
         InputStream is = null;
-        BufferedInputStream bf = null;
+        BufferedInputStream bis = null;
         try {
             process = Runtime.getRuntime().exec(brilloActual);
             is = process.getInputStream();
-            bf = new BufferedInputStream(is);
+            bis = new BufferedInputStream(is);
             byte[] contents = new byte[1024];
             int bytesRead;
-            if ((bytesRead = bf.read(contents)) != -1) {
+            if ((bytesRead = bis.read(contents)) != -1) {
                 brillo = new Integer(new String(contents, 0, bytesRead).trim());
             }
         } catch (IOException ex) {
             ex.printStackTrace();
         } finally {
-            cerrarProcesos(bf, is, process, null);
+            cerrarProcesos(bis, is, process, null);
         }
         return brillo;
     }
@@ -59,20 +59,20 @@ public class Util {
         String[] brilloActual = {"sh", "-c", "cat /sys/class/backlight/intel_backlight/brightness"};
         Process process = null;
         InputStream is = null;
-        BufferedInputStream bf = null;
+        BufferedInputStream bis = null;
         try {
             process = Runtime.getRuntime().exec(brilloActual);
             is = process.getInputStream();
-            bf = new BufferedInputStream(is);
+            bis = new BufferedInputStream(is);
             byte[] contents = new byte[1024];
             int bytesRead;
-            if ((bytesRead = bf.read(contents)) != -1) {
+            if ((bytesRead = bis.read(contents)) != -1) {
                 actual = new Integer(new String(contents, 0, bytesRead).trim());
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            cerrarProcesos(bf, is, process, null);
+            cerrarProcesos(bis, is, process, null);
         }
         return Math.round((float) actual * 100 / (float) BRILLO_MAXIMO);
     }
@@ -87,36 +87,36 @@ public class Util {
     }
 
     public static void guardarBrilloActual(int brilloActual) {
-        BufferedReader b = null;
+        BufferedReader br = null;
         try {
-            b = new BufferedReader(new FileReader("/etc/rc.local"));
-            String cadenaOriginal = "";
-            String cadenaFinal = "";
-            while ((cadenaOriginal = b.readLine()) != null) {
-                if (cadenaOriginal.contains("echo")) {
-                    cadenaFinal = cadenaOriginal.replace(obtenerSoloNumero(cadenaOriginal), String.valueOf(brilloActual));
+            br = new BufferedReader(new FileReader("/etc/rc.local"));
+            String renglonOriginal = "";
+            String renglonModificado = "";
+            while ((renglonOriginal = br.readLine()) != null) {
+                if (renglonOriginal.contains("echo")) {
+                    renglonModificado = renglonOriginal.replace(obtenerNumeroBrillo(renglonOriginal), String.valueOf(brilloActual));
                     break;
                 }
             }
-            cadenaOriginal = cadenaOriginal.replace("/", "\\/");
-            cadenaFinal = cadenaFinal.replace("/", "\\/");
-            if (!cadenaOriginal.isEmpty() && !cadenaFinal.isEmpty()) {
-                String[] sed = {"/bin/bash", "-c", "echo Zelda090| sudo -S " + "sed  -i  's/" + cadenaOriginal + "/" + cadenaFinal + "/g' /etc/rc.local"};
+            renglonOriginal = renglonOriginal.replace("/", "\\/");
+            renglonModificado = renglonModificado.replace("/", "\\/");
+            if (!renglonOriginal.isEmpty() && !renglonModificado.isEmpty()) {
+                String[] sed = {"/bin/bash", "-c", "echo Zelda090| sudo -S " + "sed  -i  's/" + renglonOriginal + "/" + renglonModificado + "/g' /etc/rc.local"};
                 new ProcessBuilder(sed).start();
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            cerrarProcesos(null, null, null, b);
+            cerrarProcesos(null, null, null, br);
         }
     }
 
-    private static String obtenerSoloNumero(String s) {
+    private static String obtenerNumeroBrillo(String renglon) {
         String numero = "";
-        for (int i = 0; i < s.length(); i++) {
-            char x = s.charAt(i);
+        for (int i = 0; i < renglon.length(); i++) {
+            char x = renglon.charAt(i);
             if (x >= 48 && x <= 57) {
-                numero += s.charAt(i);
+                numero += renglon.charAt(i);
             }
         }
         return numero;

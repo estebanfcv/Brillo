@@ -14,7 +14,6 @@ public class Panel extends javax.swing.JPanel {
         this.setSize(318, 164);
     }
 
-    
     @Override
     public void paint(Graphics g) {
         Dimension tamanio = getSize();
