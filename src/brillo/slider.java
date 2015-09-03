@@ -15,7 +15,7 @@ import javax.swing.ImageIcon;
 public class slider extends javax.swing.JFrame {
 
     public final int BRILLO_MAXIMO;
-    private Hilo hilo;
+    private final Hilo hilo;
 
     /**
      * Creates new form slider

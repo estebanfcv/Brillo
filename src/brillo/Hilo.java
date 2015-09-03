@@ -20,11 +20,7 @@ public class Hilo implements Runnable {
     public void run() {
         while (corriendo) {
             try {
-                int brilloAnterior = js.getValue();
-                int brilloActual = Util.obtenerBrilloActual(BRILLO_MAXIMO);
-                if (brilloAnterior != brilloActual) {
-                    js.setValue(brilloActual);
-                }
+                js.setValue(Util.obtenerBrilloActual(BRILLO_MAXIMO));
                 Thread.sleep(100);
             } catch (Exception e) {
                 e.printStackTrace();
