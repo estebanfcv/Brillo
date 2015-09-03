@@ -10,7 +10,6 @@ public class Hilo implements Runnable {
 
     private final int BRILLO_MAXIMO;
     private boolean corriendo;
-    private int brilloActual;
     private JSlider js;
 
     public Hilo(int BRILLO_MAXIMO) {
@@ -21,7 +20,11 @@ public class Hilo implements Runnable {
     public void run() {
         while (corriendo) {
             try {
-                js.setValue(Util.obtenerBrilloActual(BRILLO_MAXIMO));
+                int brilloAnterior = js.getValue();
+                int brilloActual = Util.obtenerBrilloActual(BRILLO_MAXIMO);
+                if (brilloAnterior != brilloActual) {
+                    js.setValue(brilloActual);
+                }
                 Thread.sleep(100);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -35,10 +38,6 @@ public class Hilo implements Runnable {
 
     public void setCorriendo(boolean corriendo) {
         this.corriendo = corriendo;
-    }
-
-    public int getBrilloActual() {
-        return brilloActual;
     }
 
     public void setJs(JSlider js) {
