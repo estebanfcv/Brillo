@@ -15,6 +15,7 @@ import javax.swing.ImageIcon;
 public class slider extends javax.swing.JFrame {
 
     public final int BRILLO_MAXIMO;
+    private Hilo hilo;
 
     /**
      * Creates new form slider
@@ -24,6 +25,11 @@ public class slider extends javax.swing.JFrame {
         initComponents();
         setIconImage(new ImageIcon(getClass().getResource("/imagenes/sol.png")).getImage());
         JSBrillo.setValue(obtenerBrilloActual(BRILLO_MAXIMO));
+        hilo = new Hilo(BRILLO_MAXIMO);
+        hilo.setCorriendo(true);
+        hilo.setJs(JSBrillo);
+        Thread t = new Thread(hilo);
+        t.start();
     }
 
     /**
@@ -113,6 +119,8 @@ public class slider extends javax.swing.JFrame {
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         guardarBrilloActual(Math.round(((float) BRILLO_MAXIMO * JSBrillo.getValue()) / (float) 100));
+        hilo.setCorriendo(false);
+
     }//GEN-LAST:event_formWindowClosing
 
     private void formMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_formMouseWheelMoved
